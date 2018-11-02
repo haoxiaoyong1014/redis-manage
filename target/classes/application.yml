@@ -6,7 +6,8 @@ spring:
         exclude:  static/**,public/**
         enabled:  true
     application:
-      name: springboot-webSocket
-manager:
-  username: admin
-  password: admin
+      name: redis-manage
+    redis:
+      host: 116.62.187.190
+      password:
+
