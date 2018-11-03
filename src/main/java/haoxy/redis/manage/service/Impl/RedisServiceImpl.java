@@ -2,6 +2,7 @@ package haoxy.redis.manage.service.Impl;
 
 import haoxy.redis.manage.model.InfoCode;
 import haoxy.redis.manage.model.PageInfo;
+import haoxy.redis.manage.model.ResParam;
 import haoxy.redis.manage.model.RespInfo;
 import haoxy.redis.manage.service.RedisService;
 import haoxy.redis.manage.utils.ConvertPageUtil;
@@ -32,20 +33,22 @@ public class RedisServiceImpl implements RedisService {
     @Override
     public RespInfo selectKeys(PageInfo pageInfo) {
         RespInfo respInfo = new RespInfo();
+        ResParam resParam = new ResParam();
         ScanOptions options = ScanOptions.scanOptions().match("*").build();
         RedisConnectionFactory factory = redisTemplate.getConnectionFactory();
         RedisConnection connection = factory.getConnection();
         Cursor<byte[]> cursor = connection.scan(options);
        // Map<Object,Object> result = new HashMap<>(pageInfo.getPageSize());
+        //List<Object> result = resParam.getName(pageInfo.getPageSize());
+
         List<Object>result=new ArrayList<>(pageInfo.getPageSize());
         int tmpIndex = 0;
         int startIndex = (pageInfo.getPageNow() - 1) * pageInfo.getPageSize();
         int end = pageInfo.getPageNow() * pageInfo.getPageSize();
         ConvertPageUtil.convertPage(factory, connection, cursor, result, tmpIndex, startIndex, end);
-        respInfo.setContent(result);
+        resParam.setName(result);
+        respInfo.setContent(resParam);
         respInfo.setStatus(InfoCode.SUCCESS);
         return respInfo;
     }
-
-
 }
