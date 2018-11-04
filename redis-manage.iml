@@ -82,6 +82,6 @@
     <orderEntry type="library" name="Maven: io.netty:netty-handler:4.1.23.Final" level="project" />
     <orderEntry type="library" name="Maven: io.netty:netty-codec:4.1.23.Final" level="project" />
     <orderEntry type="library" name="Maven: org.apache.commons:commons-pool2:2.5.0" level="project" />
-    <orderEntry type="library" name="Maven: com.alibaba:fastjson:1.2.15" level="project" />
+    <orderEntry type="library" name="Maven: com.alibaba:fastjson:1.2.31" level="project" />
   </component>
 </module>
