@@ -11,6 +11,16 @@ public class ResParam {
 
     private List<Object> name;
 
+    private Long total;
+
+    public Long getTotal() {
+        return total;
+    }
+
+    public void setTotal(Long total) {
+        this.total = total;
+    }
+
     public List<Object> getName() {
         return name;
     }

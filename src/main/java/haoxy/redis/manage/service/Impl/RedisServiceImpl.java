@@ -37,16 +37,15 @@ public class RedisServiceImpl implements RedisService {
         ScanOptions options = ScanOptions.scanOptions().match("*").build();
         RedisConnectionFactory factory = redisTemplate.getConnectionFactory();
         RedisConnection connection = factory.getConnection();
+        Long aLong = connection.dbSize();
         Cursor<byte[]> cursor = connection.scan(options);
-       // Map<Object,Object> result = new HashMap<>(pageInfo.getPageSize());
-        //List<Object> result = resParam.getName(pageInfo.getPageSize());
-
-        List<Object>result=new ArrayList<>(pageInfo.getPageSize());
+        List<Object> result = new ArrayList<>(pageInfo.getPageSize());
         int tmpIndex = 0;
         int startIndex = (pageInfo.getPageNow() - 1) * pageInfo.getPageSize();
         int end = pageInfo.getPageNow() * pageInfo.getPageSize();
         ConvertPageUtil.convertPage(factory, connection, cursor, result, tmpIndex, startIndex, end);
         resParam.setName(result);
+        resParam.setTotal(aLong);
         respInfo.setContent(resParam);
         respInfo.setStatus(InfoCode.SUCCESS);
         return respInfo;

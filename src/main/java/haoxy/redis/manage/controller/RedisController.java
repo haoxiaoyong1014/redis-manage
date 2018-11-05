@@ -24,11 +24,11 @@ import java.util.concurrent.CopyOnWriteArrayList;
 @RequestMapping(value = "redis")
 public class RedisController {
 
-    @Value("${redis.name}")
+   /* @Value("${redis.name}")
     private String defaultServerName;
 
     @Value("${redis.index}")
-    private String DEFAULT_DBINDEX;
+    private String DEFAULT_DBINDEX;*/
 
     @Autowired
     private RedisService redisService;
