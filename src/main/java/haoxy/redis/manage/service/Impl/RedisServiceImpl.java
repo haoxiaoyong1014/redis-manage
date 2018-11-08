@@ -54,7 +54,7 @@ public class RedisServiceImpl implements RedisService {
     public RespInfo selectValueByKey(String key, String type) {
         RespInfo respInfo = new RespInfo();
         if (type.equals("hash")) {
-            Map entries = redisTemplate.opsForHash().entries(key);
+            Map<Object,Object> entries = redisTemplate.opsForHash().entries(key);
             respInfo.setContent(entries);
             return respInfo;
         }
