@@ -1,5 +1,7 @@
 package haoxy.redis.manage.utils;
 
+import haoxy.redis.manage.model.BodyInfo;
+import haoxy.redis.manage.model.PageInfo;
 import org.springframework.data.redis.connection.RedisConnection;
 import org.springframework.data.redis.connection.RedisConnectionFactory;
 import org.springframework.data.redis.core.Cursor;
@@ -14,11 +16,14 @@ import java.util.Map;
  * github:https://github.com/haoxiaoyong1014
  */
 public class ConvertPageUtil {
-    public static void convertPage(RedisConnectionFactory factory, RedisConnection connection, Cursor<byte[]> cursor, Map<Object,Object> result, int tmpIndex, int startIndex, int end) {
+    public static void convertPage(RedisConnectionFactory factory, RedisConnection connection, Cursor<byte[]> cursor, List<BodyInfo> result, int tmpIndex, int startIndex, int end) {
         while (cursor.hasNext()) {
             if (tmpIndex >= startIndex && tmpIndex < end) {
                 //result.put(new String(cursor.next()),connection.type(cursor.next()).code());
-                result.put(new String(cursor.next()),connection.type(cursor.next()).code());
+                BodyInfo bodyInfo = new BodyInfo();
+                bodyInfo.setName(new String(cursor.next()));
+                bodyInfo.setType(connection.type(cursor.next()).code());
+                result.add(bodyInfo);
                 tmpIndex++;
                 continue;
             }

@@ -56,8 +56,8 @@ public class RedisController {
      */
     @RequestMapping(value = "getValue")
     @ResponseBody
-    public String getValue(String key) {
-        RespInfo respInfo = redisService.selectValueByKey(key);
+    public String getValue(String key, String type) {
+        RespInfo respInfo = redisService.selectValueByKey(key, type);
         return JSON.toJSONString(respInfo);
     }
 
@@ -66,12 +66,12 @@ public class RedisController {
      */
     @RequestMapping(value = "add")
     public void add() {
-        //for (int i = 0; i < 9; i++) {
-            Integer append = redisTemplate.opsForValue().append("Apple", "1875817707");
-            //Map<String, String> map = new HashMap<>();
-           // map.put("hash_" + i, "hash_value_" + i);
-            //redisTemplate.opsForHash().putAll("hash_" + i, map);
-       // }
+        for (int i = 0; i < 9; i++) {
+            redisTemplate.opsForValue().append("Apple", "1875817707");
+            Map<String, String> map = new HashMap<>();
+            map.put("hash_" + i, "hash_value_" + i);
+            redisTemplate.opsForHash().putAll("hash_" + i, map);
+        }
     }
 
 }

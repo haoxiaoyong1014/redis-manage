@@ -9,7 +9,7 @@ import java.util.*;
  */
 public class ResParam {
 
-    private Map<Object,Object> name;
+    private List<BodyInfo> name;
 
     private Long total;
 
@@ -22,11 +22,11 @@ public class ResParam {
         this.total = total;
     }
 
-    public Map<Object, Object> getName() {
+    public List<BodyInfo> getName() {
         return name;
     }
 
-    public void setName(Map<Object, Object> name) {
+    public void setName(List<BodyInfo> name) {
         this.name = name;
     }
 

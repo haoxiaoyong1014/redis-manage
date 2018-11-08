@@ -1,9 +1,6 @@
 package haoxy.redis.manage.service.Impl;
 
-import haoxy.redis.manage.model.InfoCode;
-import haoxy.redis.manage.model.PageInfo;
-import haoxy.redis.manage.model.ResParam;
-import haoxy.redis.manage.model.RespInfo;
+import haoxy.redis.manage.model.*;
 import haoxy.redis.manage.service.RedisService;
 import haoxy.redis.manage.utils.ConvertPageUtil;
 import haoxy.redis.manage.utils.RKey;
@@ -40,13 +37,13 @@ public class RedisServiceImpl implements RedisService {
         RedisConnection connection = factory.getConnection();
         Long aLong = connection.dbSize();
         Cursor<byte[]> cursor = connection.scan(options);
-        //List<Object> result = new ArrayList<>(pageInfo.getPageSize());
-        Map<Object,Object>resMap=new HashMap<>(pageInfo.getPageSize());
+        List<BodyInfo> result = new ArrayList<>(pageInfo.getPageSize());
+        // Map<Object,Object>resMap=new HashMap<>(pageInfo.getPageSize());
         int tmpIndex = 0;
         int startIndex = (pageInfo.getPageNow() - 1) * pageInfo.getPageSize();
         int end = pageInfo.getPageNow() * pageInfo.getPageSize();
-        ConvertPageUtil.convertPage(factory, connection, cursor, resMap, tmpIndex, startIndex, end);
-        resParam.setName(resMap);
+        ConvertPageUtil.convertPage(factory, connection, cursor, result, tmpIndex, startIndex, end);
+        resParam.setName(result);
         resParam.setTotal(aLong);
         respInfo.setContent(resParam);
         respInfo.setStatus(InfoCode.SUCCESS);
@@ -54,9 +51,13 @@ public class RedisServiceImpl implements RedisService {
     }
 
     @Override
-    public RespInfo selectValueByKey(String key) {
+    public RespInfo selectValueByKey(String key, String type) {
         RespInfo respInfo = new RespInfo();
-        DataType type = redisTemplate.type(key);
+        if (type.equals("hash")) {
+            Map entries = redisTemplate.opsForHash().entries(key);
+            respInfo.setContent(entries);
+            return respInfo;
+        }
         Object value = redisTemplate.opsForValue().get(key);
         respInfo.setContent(value);
         respInfo.setStatus(InfoCode.SUCCESS);
