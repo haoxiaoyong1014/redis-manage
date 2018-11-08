@@ -8,6 +8,7 @@ import haoxy.redis.manage.service.RedisService;
 import haoxy.redis.manage.utils.ConvertPageUtil;
 import haoxy.redis.manage.utils.RKey;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.redis.connection.DataType;
 import org.springframework.data.redis.connection.RedisConnection;
 import org.springframework.data.redis.connection.RedisConnectionFactory;
 import org.springframework.data.redis.core.Cursor;
@@ -39,14 +40,25 @@ public class RedisServiceImpl implements RedisService {
         RedisConnection connection = factory.getConnection();
         Long aLong = connection.dbSize();
         Cursor<byte[]> cursor = connection.scan(options);
-        List<Object> result = new ArrayList<>(pageInfo.getPageSize());
+        //List<Object> result = new ArrayList<>(pageInfo.getPageSize());
+        Map<Object,Object>resMap=new HashMap<>(pageInfo.getPageSize());
         int tmpIndex = 0;
         int startIndex = (pageInfo.getPageNow() - 1) * pageInfo.getPageSize();
         int end = pageInfo.getPageNow() * pageInfo.getPageSize();
-        ConvertPageUtil.convertPage(factory, connection, cursor, result, tmpIndex, startIndex, end);
-        resParam.setName(result);
+        ConvertPageUtil.convertPage(factory, connection, cursor, resMap, tmpIndex, startIndex, end);
+        resParam.setName(resMap);
         resParam.setTotal(aLong);
         respInfo.setContent(resParam);
+        respInfo.setStatus(InfoCode.SUCCESS);
+        return respInfo;
+    }
+
+    @Override
+    public RespInfo selectValueByKey(String key) {
+        RespInfo respInfo = new RespInfo();
+        DataType type = redisTemplate.type(key);
+        Object value = redisTemplate.opsForValue().get(key);
+        respInfo.setContent(value);
         respInfo.setStatus(InfoCode.SUCCESS);
         return respInfo;
     }

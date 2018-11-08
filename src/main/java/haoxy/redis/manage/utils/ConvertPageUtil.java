@@ -6,6 +6,7 @@ import org.springframework.data.redis.core.Cursor;
 import org.springframework.data.redis.core.RedisConnectionUtils;
 
 import java.util.List;
+import java.util.Map;
 
 /**
  * Created by haoxy on 2018/11/2.
@@ -13,11 +14,11 @@ import java.util.List;
  * github:https://github.com/haoxiaoyong1014
  */
 public class ConvertPageUtil {
-    public static void convertPage(RedisConnectionFactory factory, RedisConnection connection, Cursor<byte[]> cursor, List<Object> result, int tmpIndex, int startIndex, int end) {
+    public static void convertPage(RedisConnectionFactory factory, RedisConnection connection, Cursor<byte[]> cursor, Map<Object,Object> result, int tmpIndex, int startIndex, int end) {
         while (cursor.hasNext()) {
             if (tmpIndex >= startIndex && tmpIndex < end) {
                 //result.put(new String(cursor.next()),connection.type(cursor.next()).code());
-                result.add(new String(cursor.next()));
+                result.put(new String(cursor.next()),connection.type(cursor.next()).code());
                 tmpIndex++;
                 continue;
             }

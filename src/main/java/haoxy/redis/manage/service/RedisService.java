@@ -10,4 +10,6 @@ import haoxy.redis.manage.model.RespInfo;
  */
 public interface RedisService {
     RespInfo selectKeys(PageInfo pageInfo);
+
+    RespInfo selectValueByKey(String key);
 }

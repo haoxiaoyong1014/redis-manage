@@ -10,4 +10,3 @@ spring:
     redis:
       host: 116.62.187.190
       password:
-
