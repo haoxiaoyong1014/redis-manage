@@ -15,6 +15,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.ResponseBody;
 
 import java.util.HashMap;
+import java.util.*;
 import java.util.Map;
 import java.util.concurrent.CopyOnWriteArrayList;
 
@@ -66,12 +67,19 @@ public class RedisController {
      */
     @RequestMapping(value = "add")
     public void add() {
-        for (int i = 0; i < 9; i++) {
-            redisTemplate.opsForValue().append("Apple", "1875817707");
-            Map<String, String> map = new HashMap<>();
-            map.put("hash_" + i, "hash_value_" + i);
-            redisTemplate.opsForHash().putAll("hash_" + i, map);
-        }
+        //for (int i = 0; i < 9; i++) {
+           // redisTemplate.opsForValue().append("Apple", "1875817707");
+            /*Map<String, Object> map = new HashMap<>();
+            map.put("123", "hello");
+            map.put("abc", "world");
+            redisTemplate.opsForHash().putAll("hash_key2", map);*/
+        List<String>list=new ArrayList<>();
+        list.add("ig");
+        list.add("rng");
+        list.add("haoxy");
+        redisTemplate.opsForValue().set("list",list);
+       // }
     }
+
 
 }

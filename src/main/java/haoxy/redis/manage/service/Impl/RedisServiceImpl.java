@@ -42,7 +42,7 @@ public class RedisServiceImpl implements RedisService {
         int tmpIndex = 0;
         int startIndex = (pageInfo.getPageNow() - 1) * pageInfo.getPageSize();
         int end = pageInfo.getPageNow() * pageInfo.getPageSize();
-        ConvertPageUtil.convertPage(factory, connection, cursor, result, tmpIndex, startIndex, end);
+        ConvertPageUtil.convertPage(factory, connection, cursor, result, tmpIndex, startIndex, end, redisTemplate);
         resParam.setName(result);
         resParam.setTotal(aLong);
         respInfo.setContent(resParam);
@@ -53,13 +53,24 @@ public class RedisServiceImpl implements RedisService {
     @Override
     public RespInfo selectValueByKey(String key, String type) {
         RespInfo respInfo = new RespInfo();
+        List<BodyInfo> list = new ArrayList<>();
+        BodyInfo bodyInfo = null;
         if (type.equals("hash")) {
-            Map<Object,Object> entries = redisTemplate.opsForHash().entries(key);
-            respInfo.setContent(entries);
+            Map<Object, Object> entries = redisTemplate.opsForHash().entries(key);
+            for (Map.Entry<Object, Object> entry : entries.entrySet()) {
+                bodyInfo = new BodyInfo();
+                bodyInfo.setKeyAndValue(entry.getKey() + ":" + entry.getValue());
+                list.add(bodyInfo);
+
+            }
+            respInfo.setContent(list);
             return respInfo;
         }
-        Object value = redisTemplate.opsForValue().get(key);
-        respInfo.setContent(value);
+        String value = (String)redisTemplate.opsForValue().get(key);
+        bodyInfo = new BodyInfo();
+        bodyInfo.setKeyAndValue(value);
+        list.add(bodyInfo);
+        respInfo.setContent(list);
         respInfo.setStatus(InfoCode.SUCCESS);
         return respInfo;
     }

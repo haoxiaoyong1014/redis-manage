@@ -11,6 +11,16 @@ public class BodyInfo {
 
     private String name;
 
+    private String keyAndValue;
+
+    public String getKeyAndValue() {
+        return keyAndValue;
+    }
+
+    public void setKeyAndValue(String keyAndValue) {
+        this.keyAndValue = keyAndValue;
+    }
+
     public String getType() {
         return type;
     }
