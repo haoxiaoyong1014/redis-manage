@@ -1,4 +1,4 @@
-package haoxy.redis.manage.model;
+package haoxy.redis.manage.resInfo;
 /**
  * Created by haoxy on 2018/11/1.
  * E-mail:hxyHelloWorld@163.com

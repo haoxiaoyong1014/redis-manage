@@ -1,21 +1,23 @@
 package haoxy.redis.manage.service.Impl;
 
 import haoxy.redis.manage.model.*;
+import haoxy.redis.manage.resInfo.InfoCode;
+import haoxy.redis.manage.resInfo.RespInfo;
 import haoxy.redis.manage.service.RedisService;
 import haoxy.redis.manage.utils.ConvertPageUtil;
-import haoxy.redis.manage.utils.RKey;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.data.redis.connection.DataType;
 import org.springframework.data.redis.connection.RedisConnection;
 import org.springframework.data.redis.connection.RedisConnectionFactory;
 import org.springframework.data.redis.core.Cursor;
-import org.springframework.data.redis.core.RedisConnectionUtils;
 import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.data.redis.core.ScanOptions;
 import org.springframework.stereotype.Service;
 
 import java.util.*;
-import java.util.Set;
+
+import static haoxy.redis.manage.utils.ResUtils.getHashInfo;
+import static haoxy.redis.manage.utils.ResUtils.getListInfo;
+import static haoxy.redis.manage.utils.ResUtils.getStringInfo;
 
 /**
  * Created by haoxy on 2018/11/1.
@@ -24,6 +26,7 @@ import java.util.Set;
  */
 @Service
 public class RedisServiceImpl implements RedisService {
+
 
     @Autowired
     private RedisTemplate redisTemplate;
@@ -55,23 +58,19 @@ public class RedisServiceImpl implements RedisService {
         RespInfo respInfo = new RespInfo();
         List<BodyInfo> list = new ArrayList<>();
         BodyInfo bodyInfo = null;
-        if (type.equals("hash")) {
-            Map<Object, Object> entries = redisTemplate.opsForHash().entries(key);
-            for (Map.Entry<Object, Object> entry : entries.entrySet()) {
-                bodyInfo = new BodyInfo();
-                bodyInfo.setKeyAndValue(entry.getKey() + ":" + entry.getValue());
-                list.add(bodyInfo);
-
-            }
-            respInfo.setContent(list);
-            return respInfo;
+        switch (type) {
+            case "hash":
+                return getHashInfo(key, respInfo, list, redisTemplate);
+            case "string":
+                return getStringInfo(key, respInfo, list, redisTemplate);
+            case "list":
+                return getListInfo(key, respInfo, list, redisTemplate);
+            default:
+                respInfo.setContent("暂不支持此类型");
+                break;
         }
-        String value = (String)redisTemplate.opsForValue().get(key);
-        bodyInfo = new BodyInfo();
-        bodyInfo.setKeyAndValue(value);
-        list.add(bodyInfo);
-        respInfo.setContent(list);
-        respInfo.setStatus(InfoCode.SUCCESS);
         return respInfo;
     }
+
+
 }
