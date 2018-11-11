@@ -5,9 +5,15 @@ import haoxy.redis.manage.resInfo.InfoCode;
 import haoxy.redis.manage.resInfo.RespInfo;
 import haoxy.redis.manage.service.RedisService;
 import haoxy.redis.manage.utils.ConvertPageUtil;
+import haoxy.redis.manage.utils.StringUtil;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.redis.connection.RedisConnection;
 import org.springframework.data.redis.connection.RedisConnectionFactory;
+import org.springframework.data.redis.connection.RedisPassword;
+import org.springframework.data.redis.connection.RedisStandaloneConfiguration;
+import org.springframework.data.redis.connection.jedis.JedisConnectionFactory;
 import org.springframework.data.redis.core.Cursor;
 import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.data.redis.core.ScanOptions;
@@ -27,7 +33,7 @@ import static haoxy.redis.manage.utils.ResUtils.getStringInfo;
 @Service
 public class RedisServiceImpl implements RedisService {
 
-
+    private Logger logger = LoggerFactory.getLogger(this.getClass());
     @Autowired
     private RedisTemplate redisTemplate;
 
@@ -72,5 +78,21 @@ public class RedisServiceImpl implements RedisService {
         return respInfo;
     }
 
-
+    @Override
+    public RespInfo addServer(ServerInfo serverInfo) {
+        RespInfo respInfo = null;
+        if (!StringUtil.isEmpty(serverInfo.getHost()) && !StringUtil.isEmpty(serverInfo.getPassworld())) {
+            RedisStandaloneConfiguration standaloneConfiguration = new RedisStandaloneConfiguration();
+            standaloneConfiguration.setHostName(serverInfo.getHost());
+            standaloneConfiguration.setPassword(RedisPassword.of(serverInfo.getPassworld()));
+            standaloneConfiguration.setPort(serverInfo.getPort());
+            new JedisConnectionFactory(standaloneConfiguration);
+            respInfo = selectKeys(new PageInfo(1, 10));
+            return respInfo;
+        }
+        logger.info("host or passWorld Can't be empty .....");
+        respInfo.setContent("host or passWorld Can't be empty");
+        respInfo.setStatus(InfoCode.ERROR);
+        return respInfo;
+    }
 }

@@ -2,6 +2,7 @@ package haoxy.redis.manage.controller;
 
 import com.alibaba.fastjson.JSON;
 import haoxy.redis.manage.model.PageInfo;
+import haoxy.redis.manage.model.ServerInfo;
 import haoxy.redis.manage.resInfo.RespInfo;
 import haoxy.redis.manage.service.RedisService;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -58,6 +59,16 @@ public class RedisController {
     }
 
     /**
+     * add server
+     */
+    @RequestMapping(value = "add_server")
+    @ResponseBody
+    public String addServer(@RequestBody ServerInfo serverInfo){
+        RespInfo respInfo=redisService.addServer(serverInfo);
+        return "";
+    }
+
+    /**
      * 向 redis中加入值
      */
     @RequestMapping(value = "add")
@@ -67,7 +78,6 @@ public class RedisController {
         list.add("rng3");
         list.add("hh3");
         redisTemplate.opsForList().leftPushAll("list_keys",list);
-       // }
     }
 
 

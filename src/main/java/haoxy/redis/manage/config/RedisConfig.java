@@ -10,11 +10,13 @@ import org.springframework.context.annotation.Configuration;
 import org.springframework.context.annotation.PropertySource;
 import org.springframework.context.annotation.PropertySources;
 import org.springframework.data.redis.connection.RedisConnectionFactory;
+import org.springframework.data.redis.connection.RedisStandaloneConfiguration;
 import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.data.redis.serializer.Jackson2JsonRedisSerializer;
 import org.springframework.data.redis.serializer.JdkSerializationRedisSerializer;
 import org.springframework.data.redis.serializer.RedisSerializer;
 import org.springframework.data.redis.serializer.StringRedisSerializer;
+import redis.clients.jedis.JedisPoolConfig;
 
 /**
  * Created by haoxiaoyong on 2018/10/31.
@@ -28,6 +30,7 @@ public class RedisConfig {
     public RedisTemplate<String, Object> redisTemplate(RedisConnectionFactory redisConnectionFactory) {
 
         RedisTemplate<String, Object> template = new RedisTemplate<>();
+
         template.setConnectionFactory(redisConnectionFactory);
 
         //使用Jackson2JsonRedisSerializer来序列化和反序列化redis的value值
@@ -49,4 +52,16 @@ public class RedisConfig {
         return template;
 
     }
+    /*@Bean
+    public JedisPoolConfig jedisPoolConfig(){
+        JedisPoolConfig jedisPoolConfig = new JedisPoolConfig();
+        //最大连接数
+        jedisPoolConfig.setMaxTotal(100);
+        //最小空闲连接数
+        jedisPoolConfig.setMinIdle(20);
+        //当池内没有可用连接时，最大等待时间
+        jedisPoolConfig.setMaxWaitMillis(10000);
+        //其他属性可以自行添加
+        return jedisPoolConfig;
+    }*/
 }
