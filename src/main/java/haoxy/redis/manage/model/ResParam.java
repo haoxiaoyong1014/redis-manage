@@ -9,9 +9,10 @@ import java.util.*;
  */
 public class ResParam {
 
-    private List<Object> name;
+    private List<BodyInfo> name;
 
     private Long total;
+
 
     public Long getTotal() {
         return total;
@@ -21,18 +22,15 @@ public class ResParam {
         this.total = total;
     }
 
-    public List<Object> getName() {
+    public List<BodyInfo> getName() {
         return name;
     }
 
-    public void setName(List<Object> name) {
+    public void setName(List<BodyInfo> name) {
         this.name = name;
     }
 
     public ResParam() {
     }
 
-    public ResParam(List<Object> name) {
-        this.name = name;
-    }
 }

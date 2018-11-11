@@ -1,23 +1,30 @@
 package haoxy.redis.manage.service.Impl;
 
-import haoxy.redis.manage.model.InfoCode;
-import haoxy.redis.manage.model.PageInfo;
-import haoxy.redis.manage.model.ResParam;
-import haoxy.redis.manage.model.RespInfo;
+import haoxy.redis.manage.model.*;
+import haoxy.redis.manage.resInfo.InfoCode;
+import haoxy.redis.manage.resInfo.RespInfo;
 import haoxy.redis.manage.service.RedisService;
 import haoxy.redis.manage.utils.ConvertPageUtil;
-import haoxy.redis.manage.utils.RKey;
+import haoxy.redis.manage.utils.StringUtil;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.redis.connection.RedisConnection;
 import org.springframework.data.redis.connection.RedisConnectionFactory;
+import org.springframework.data.redis.connection.RedisPassword;
+import org.springframework.data.redis.connection.RedisStandaloneConfiguration;
+import org.springframework.data.redis.connection.jedis.JedisConnectionFactory;
+import org.springframework.data.redis.connection.lettuce.LettuceConnectionFactory;
 import org.springframework.data.redis.core.Cursor;
-import org.springframework.data.redis.core.RedisConnectionUtils;
 import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.data.redis.core.ScanOptions;
 import org.springframework.stereotype.Service;
 
 import java.util.*;
-import java.util.Set;
+
+import static haoxy.redis.manage.utils.ResUtils.getHashInfo;
+import static haoxy.redis.manage.utils.ResUtils.getListInfo;
+import static haoxy.redis.manage.utils.ResUtils.getStringInfo;
 
 /**
  * Created by haoxy on 2018/11/1.
@@ -27,6 +34,7 @@ import java.util.Set;
 @Service
 public class RedisServiceImpl implements RedisService {
 
+    private Logger logger = LoggerFactory.getLogger(this.getClass());
     @Autowired
     private RedisTemplate redisTemplate;
 
@@ -39,15 +47,53 @@ public class RedisServiceImpl implements RedisService {
         RedisConnection connection = factory.getConnection();
         Long aLong = connection.dbSize();
         Cursor<byte[]> cursor = connection.scan(options);
-        List<Object> result = new ArrayList<>(pageInfo.getPageSize());
+        List<BodyInfo> result = new ArrayList<>(pageInfo.getPageSize());
+        // Map<Object,Object>resMap=new HashMap<>(pageInfo.getPageSize());
         int tmpIndex = 0;
         int startIndex = (pageInfo.getPageNow() - 1) * pageInfo.getPageSize();
         int end = pageInfo.getPageNow() * pageInfo.getPageSize();
-        ConvertPageUtil.convertPage(factory, connection, cursor, result, tmpIndex, startIndex, end);
+        ConvertPageUtil.convertPage(factory, connection, cursor, result, tmpIndex, startIndex, end, redisTemplate);
         resParam.setName(result);
         resParam.setTotal(aLong);
         respInfo.setContent(resParam);
         respInfo.setStatus(InfoCode.SUCCESS);
+        return respInfo;
+    }
+
+    @Override
+    public RespInfo selectValueByKey(String key, String type) {
+        RespInfo respInfo = new RespInfo();
+        List<BodyInfo> list = new ArrayList<>();
+        BodyInfo bodyInfo = null;
+        switch (type) {
+            case "hash":
+                return getHashInfo(key, respInfo, list, redisTemplate);
+            case "string":
+                return getStringInfo(key, respInfo, list, redisTemplate);
+            case "list":
+                return getListInfo(key, respInfo, list, redisTemplate);
+            default:
+                respInfo.setContent("暂不支持此类型");
+                break;
+        }
+        return respInfo;
+    }
+
+    @Override
+    public RespInfo addServer(ServerInfo serverInfo) {
+        RespInfo respInfo = null;
+        if (!StringUtil.isEmpty(serverInfo.getHost()) && !StringUtil.isEmpty(serverInfo.getPassword())) {
+            RedisStandaloneConfiguration standaloneConfiguration = new RedisStandaloneConfiguration();
+            standaloneConfiguration.setHostName(serverInfo.getHost());
+            standaloneConfiguration.setPassword(RedisPassword.of(serverInfo.getPassword()));
+            standaloneConfiguration.setPort(serverInfo.getPort());
+            new LettuceConnectionFactory(standaloneConfiguration);
+            respInfo = selectKeys(new PageInfo(1, 10));
+            return respInfo;
+        }
+        logger.info("host or passWorld Can't be empty .....");
+        respInfo.setContent("host or passWorld Can't be empty");
+        respInfo.setStatus(InfoCode.ERROR);
         return respInfo;
     }
 }

@@ -1,7 +1,8 @@
 package haoxy.redis.manage.service;
 
 import haoxy.redis.manage.model.PageInfo;
-import haoxy.redis.manage.model.RespInfo;
+import haoxy.redis.manage.model.ServerInfo;
+import haoxy.redis.manage.resInfo.RespInfo;
 
 /**
  * Created by haoxy on 2018/11/1.
@@ -10,4 +11,8 @@ import haoxy.redis.manage.model.RespInfo;
  */
 public interface RedisService {
     RespInfo selectKeys(PageInfo pageInfo);
+
+    RespInfo selectValueByKey(java.lang.String key,String type);
+
+    RespInfo addServer(ServerInfo serverInfo);
 }

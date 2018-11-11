@@ -17,6 +17,7 @@
     </annotationProcessing>
     <bytecodeTargetLevel>
       <module name="redis-manage" target="1.8" />
+      <module name="sms-operator" target="1.8" />
     </bytecodeTargetLevel>
   </component>
 </project>
