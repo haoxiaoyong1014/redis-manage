@@ -14,9 +14,11 @@ import org.springframework.data.redis.connection.RedisConnectionFactory;
 import org.springframework.data.redis.connection.RedisPassword;
 import org.springframework.data.redis.connection.RedisStandaloneConfiguration;
 import org.springframework.data.redis.connection.jedis.JedisConnectionFactory;
+import org.springframework.data.redis.connection.lettuce.LettuceConnectionFactory;
 import org.springframework.data.redis.core.Cursor;
 import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.data.redis.core.ScanOptions;
+import org.springframework.data.redis.serializer.StringRedisSerializer;
 import org.springframework.stereotype.Service;
 
 import java.util.*;
@@ -82,11 +84,20 @@ public class RedisServiceImpl implements RedisService {
     public RespInfo addServer(ServerInfo serverInfo) {
         RespInfo respInfo = null;
         if (!StringUtil.isEmpty(serverInfo.getHost()) && !StringUtil.isEmpty(serverInfo.getPassworld())) {
+            RedisConnectionFactory redisConnectionFactory=new LettuceConnectionFactory();
+            ((LettuceConnectionFactory) redisConnectionFactory).afterPropertiesSet();
             RedisStandaloneConfiguration standaloneConfiguration = new RedisStandaloneConfiguration();
             standaloneConfiguration.setHostName(serverInfo.getHost());
             standaloneConfiguration.setPassword(RedisPassword.of(serverInfo.getPassworld()));
             standaloneConfiguration.setPort(serverInfo.getPort());
+            RedisTemplate<String, Object> template = new RedisTemplate<>();
+            template.setValueSerializer(new StringRedisSerializer());
+            template.setKeySerializer(new StringRedisSerializer());
+            template.setHashKeySerializer(new StringRedisSerializer());
+            template.setHashValueSerializer(new StringRedisSerializer());
+            //template.afterPropertiesSet();
             new JedisConnectionFactory(standaloneConfiguration);
+
             respInfo = selectKeys(new PageInfo(1, 10));
             return respInfo;
         }
