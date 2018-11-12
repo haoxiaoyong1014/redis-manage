@@ -65,7 +65,7 @@ public class RedisController {
     @ResponseBody
     public String addServer(@RequestBody ServerInfo serverInfo){
         RespInfo respInfo=redisService.addServer(serverInfo);
-        return "";
+        return JSON.toJSONString(respInfo);
     }
 
     /**

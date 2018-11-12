@@ -9,9 +9,13 @@ public class ServerInfo {
 
     private String host;
 
-    private String passworld;
+    private String password;
 
     private Integer port;
+
+    private int pageSize;
+
+    private int pageNow;
 
     public String getHost() {
         return host;
@@ -21,12 +25,12 @@ public class ServerInfo {
         this.host = host;
     }
 
-    public String getPassworld() {
-        return passworld;
+    public String getPassword() {
+        return password;
     }
 
-    public void setPassworld(String passworld) {
-        this.passworld = passworld;
+    public void setPassword(String password) {
+        this.password = password;
     }
 
     public Integer getPort() {
@@ -35,5 +39,21 @@ public class ServerInfo {
 
     public void setPort(Integer port) {
         this.port = port;
+    }
+
+    public int getPageSize() {
+        return pageSize;
+    }
+
+    public void setPageSize(int pageSize) {
+        this.pageSize = pageSize;
+    }
+
+    public int getPageNow() {
+        return pageNow;
+    }
+
+    public void setPageNow(int pageNow) {
+        this.pageNow = pageNow;
     }
 }
