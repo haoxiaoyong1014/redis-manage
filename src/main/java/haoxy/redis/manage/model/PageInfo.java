@@ -11,25 +11,24 @@ public class PageInfo {
 
     private int pageNow;
 
-    private int totalCount; // 总的记录条数
+    private String cond; // 总的记录条数
 
-    private int totalPageCount; // 总的页数
+    private String num; // 总的页数
 
-
-    public int getTotalCount() {
-        return totalCount;
+    public String getCond() {
+        return cond;
     }
 
-    public void setTotalCount(int totalCount) {
-        this.totalCount = totalCount;
+    public void setCond(String cond) {
+        this.cond = cond;
     }
 
-    public int getTotalPageCount() {
-        return totalPageCount;
+    public String getNum() {
+        return num;
     }
 
-    public void setTotalPageCount(int totalPageCount) {
-        this.totalPageCount = totalPageCount;
+    public void setNum(String num) {
+        this.num = num;
     }
 
     public int getPageSize() {

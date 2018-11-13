@@ -4,6 +4,7 @@ import haoxy.redis.manage.model.BodyInfo;
 import haoxy.redis.manage.resInfo.InfoCode;
 import haoxy.redis.manage.resInfo.RespInfo;
 import org.springframework.data.redis.core.RedisTemplate;
+import org.springframework.data.redis.serializer.StringRedisSerializer;
 
 import java.util.List;
 import java.util.Map;
@@ -48,5 +49,12 @@ public class ResUtils {
         }
         respInfo.setContent(list);
         return respInfo;
+    }
+    public static void template() {
+        RedisTemplate<String, Object> template = new RedisTemplate<>();
+        template.setValueSerializer(new StringRedisSerializer());
+        template.setKeySerializer(new StringRedisSerializer());
+        template.setHashKeySerializer(new StringRedisSerializer());
+        template.setHashValueSerializer(new StringRedisSerializer());
     }
 }

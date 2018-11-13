@@ -51,37 +51,4 @@ public class ConvertPageUtil {
             e.printStackTrace();
         }
     }
-    /*public static void convertAddServer(RedisConnectionFactory factory, RedisConnection connection, Cursor<byte[]> cursor, List<BodyInfo> result, int tmpIndex, int startIndex,
-                                   int end, RedisTemplate redisTemplate) {
-        while (cursor.hasNext()) {
-            if (tmpIndex >= startIndex && tmpIndex < end) {
-                //result.put(new String(cursor.next()),connection.type(cursor.next()).code());
-                BodyInfo bodyInfo = new BodyInfo();
-                String skey = new String(cursor.next());
-                bodyInfo.setName(skey);
-                DataType type = redisTemplate.type(skey);
-                bodyInfo.setType(type.code());
-                result.add(bodyInfo);
-                tmpIndex++;
-                continue;
-            }
-            // 获取到满足条件的数据后,就可以退出了
-            if (tmpIndex >= end) {
-                break;
-            }
-            tmpIndex++;
-            cursor.next();
-        }
-        try {
-            cursor.close();
-        } catch (Exception e) {
-            e.printStackTrace();
-        }
-
-        try {
-            RedisConnectionUtils.releaseConnection(connection, factory);
-        } catch (Exception e) {
-            e.printStackTrace();
-        }
-    }*/
 }

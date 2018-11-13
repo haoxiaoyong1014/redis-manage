@@ -63,22 +63,29 @@ public class RedisController {
      */
     @RequestMapping(value = "add_server")
     @ResponseBody
-    public String addServer(@RequestBody ServerInfo serverInfo){
-        RespInfo respInfo=redisService.addServer(serverInfo);
+    public String addServer(@RequestBody ServerInfo serverInfo) {
+        RespInfo respInfo = redisService.addServer(serverInfo);
         return JSON.toJSONString(respInfo);
     }
+    /**
+     * 模糊查询
+     */
+    @RequestMapping(value = "like_select")
+    @ResponseBody
+    public String likeSelect(){
 
+        return "";
+    }
     /**
      * 向 redis中加入值
      */
     @RequestMapping(value = "add")
     public void add() {
-        List<Object>list=new ArrayList<>();
+        List<Object> list = new ArrayList<>();
         list.add("ig3");
         list.add("rng3");
         list.add("hh3");
-        redisTemplate.opsForList().leftPushAll("list_keys",list);
+        redisTemplate.opsForList().leftPushAll("list_keys", list);
     }
-
 
 }

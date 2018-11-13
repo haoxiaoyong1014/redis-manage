@@ -4,7 +4,9 @@ import haoxy.redis.manage.model.*;
 import haoxy.redis.manage.resInfo.InfoCode;
 import haoxy.redis.manage.resInfo.RespInfo;
 import haoxy.redis.manage.service.RedisService;
+import haoxy.redis.manage.utils.Constant;
 import haoxy.redis.manage.utils.ConvertPageUtil;
+import haoxy.redis.manage.utils.ResUtils;
 import haoxy.redis.manage.utils.StringUtil;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -34,26 +36,25 @@ import static haoxy.redis.manage.utils.ResUtils.getStringInfo;
  * github:https://github.com/haoxiaoyong1014
  */
 @Service
-public class RedisServiceImpl implements RedisService {
+public class RedisServiceImpl implements RedisService, Constant {
 
     private Logger logger = LoggerFactory.getLogger(this.getClass());
     @Autowired
     private RedisTemplate redisTemplate;
-    public static final CopyOnWriteArrayList<Map<String, Object>> redisServerCache = new CopyOnWriteArrayList<Map<String, Object>>();
 
     @Override
     public RespInfo selectKeys(PageInfo pageInfo) {
         RespInfo respInfo = new RespInfo();
         ResParam resParam = new ResParam();
-        ScanOptions options = ScanOptions.scanOptions().match("*").build();
+        ScanOptions options = null;
         RedisConnection connection = null;
         RedisConnectionFactory factory = null;
         if (redisServerCache.get(0) != null) {
             RedisStandaloneConfiguration standaloneConfiguration = new RedisStandaloneConfiguration();
-            standaloneConfiguration.setHostName((String) redisServerCache.get(0).get("host"));
-            standaloneConfiguration.setPassword(RedisPassword.of((String) redisServerCache.get(0).get("password")));
-            standaloneConfiguration.setPort((Integer) redisServerCache.get(0).get("port"));
-            template();
+            standaloneConfiguration.setHostName((String) redisServerCache.get(0).get(REDISPROPERTIES_HOST_PROFIXKEY));
+            standaloneConfiguration.setPassword(RedisPassword.of((String) redisServerCache.get(0).get(REDISPROPERTIES_PASSWORD_PROFIXKEY)));
+            standaloneConfiguration.setPort(Integer.parseInt(String.valueOf(redisServerCache.get(0).get(REDISPROPERTIES_PORT_PROFIXKEY))));
+            ResUtils.template();
             factory = new LettuceConnectionFactory(standaloneConfiguration);
             ((LettuceConnectionFactory) factory).afterPropertiesSet();
             connection = factory.getConnection();
@@ -61,8 +62,17 @@ public class RedisServiceImpl implements RedisService {
             factory = redisTemplate.getConnectionFactory();
             connection = factory.getConnection();
         }
+        if (pageInfo.getCond() == null) {
+            options = ScanOptions.scanOptions().match("*").build();
+
+        } else {
+            options = pageInfo.getNum() == REDISPROPERTIES_ONE_PROFIXKEY ?
+                    ScanOptions.scanOptions().match(pageInfo.getCond() + "*").build() :
+                    ScanOptions.scanOptions().match("*" + pageInfo.getCond() + "*").build();
+        }
         Long aLong = connection.dbSize();
         Cursor<byte[]> cursor = connection.scan(options);
+        System.out.println("打印的 alone= "+aLong);
         List<BodyInfo> result = new ArrayList<>(pageInfo.getPageSize());
         // Map<Object,Object>resMap=new HashMap<>(pageInfo.getPageSize());
         int tmpIndex = 0;
@@ -103,17 +113,18 @@ public class RedisServiceImpl implements RedisService {
         Map<String, Object> redisServerMap = new HashMap<String, Object>();
         //RedisConnectionFactory redisConnectionFactory = new LettuceConnectionFactory();
         RedisStandaloneConfiguration standaloneConfiguration = new RedisStandaloneConfiguration();
-        String host = (String) (redisServerCache.get(0) == null ? serverInfo.getHost() : redisServerCache.get(0).get("host"));
-        standaloneConfiguration.setHostName(host);
-        String password = (String) (redisServerCache.get(0) == null ? serverInfo.getPassword() : redisServerCache.get(0).get("password"));
-        standaloneConfiguration.setPassword(RedisPassword.of(password));
-        Integer port = (Integer) (redisServerCache.get(0) == null ? serverInfo.getPort() : redisServerCache.get(0).get("port"));
-        standaloneConfiguration.setPort(port);
-        redisServerMap.put("host", host);
-        redisServerMap.put("password", password);
-        redisServerMap.put("port", port);
+        // String host = (String) (redisServerCache.get(0) == null ? serverInfo.getHost() : redisServerCache.get(0).get("host"));
+        standaloneConfiguration.setHostName(serverInfo.getHost());
+        //String password = (String) (redisServerCache.get(0) == null ? serverInfo.getPassword() : redisServerCache.get(0).get("password"));
+        standaloneConfiguration.setPassword(RedisPassword.of(serverInfo.getPassword()));
+        //Integer port = (redisServerCache.get(0) == null ? serverInfo.getPort() : Integer.parseInt((String) redisServerCache.get(0).get("port")));
+        standaloneConfiguration.setPort(serverInfo.getPort());
+        redisServerMap.put(REDISPROPERTIES_HOST_PROFIXKEY, serverInfo.getHost());
+        redisServerMap.put(REDISPROPERTIES_PASSWORD_PROFIXKEY, serverInfo.getPassword());
+        redisServerMap.put(REDISPROPERTIES_PORT_PROFIXKEY, serverInfo.getPort());
+        redisServerCache.clear();
         redisServerCache.add(redisServerMap);
-        template();
+        ResUtils.template();
         LettuceConnectionFactory lettuceConnectionFactory = new LettuceConnectionFactory(standaloneConfiguration);
         lettuceConnectionFactory.afterPropertiesSet();
         RedisConnection connection = lettuceConnectionFactory.getConnection();
@@ -133,11 +144,5 @@ public class RedisServiceImpl implements RedisService {
         return respInfo;
     }
 
-    private void template() {
-        RedisTemplate<String, Object> template = new RedisTemplate<>();
-        template.setValueSerializer(new StringRedisSerializer());
-        template.setKeySerializer(new StringRedisSerializer());
-        template.setHashKeySerializer(new StringRedisSerializer());
-        template.setHashValueSerializer(new StringRedisSerializer());
-    }
+
 }
