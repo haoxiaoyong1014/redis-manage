@@ -21,4 +21,5 @@ public interface Constant {
     public static final String REDISPROPERTIES_PASSWORD_PROFIXKEY = "password";
 
     public static final String REDISPROPERTIES_ONE_PROFIXKEY = "1";
+    public static final String REDISPROPERTIES_BUTTON_PROFIXKEY = "button";
 }

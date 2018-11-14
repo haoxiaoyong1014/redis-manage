@@ -11,9 +11,20 @@ public class PageInfo {
 
     private int pageNow;
 
-    private String cond; // 总的记录条数
+    private String cond;
 
-    private String num; // 总的页数
+    private String num;
+
+    private String refresh;
+
+
+    public String getRefresh() {
+        return refresh;
+    }
+
+    public void setRefresh(String refresh) {
+        this.refresh = refresh;
+    }
 
     public String getCond() {
         return cond;

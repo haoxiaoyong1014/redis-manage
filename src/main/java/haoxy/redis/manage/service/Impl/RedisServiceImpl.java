@@ -62,7 +62,7 @@ public class RedisServiceImpl implements RedisService, Constant {
             factory = redisTemplate.getConnectionFactory();
             connection = factory.getConnection();
         }
-        if (pageInfo.getCond() == null) {
+        if ("".equals(pageInfo.getCond()) || REDISPROPERTIES_BUTTON_PROFIXKEY.equals(pageInfo.getRefresh())) {
             options = ScanOptions.scanOptions().match("*").build();
 
         } else {
@@ -72,7 +72,6 @@ public class RedisServiceImpl implements RedisService, Constant {
         }
         Long aLong = connection.dbSize();
         Cursor<byte[]> cursor = connection.scan(options);
-        System.out.println("打印的 alone= "+aLong);
         List<BodyInfo> result = new ArrayList<>(pageInfo.getPageSize());
         // Map<Object,Object>resMap=new HashMap<>(pageInfo.getPageSize());
         int tmpIndex = 0;
