@@ -61,11 +61,11 @@ public class RedisConfig implements Constant {
         mapper.enableDefaultTyping(ObjectMapper.DefaultTyping.NON_FINAL);
         serializer.setObjectMapper(mapper);
 
-        template.setValueSerializer(new StringRedisSerializer());
+        template.setValueSerializer(serializer);
         //使用StringRedisSerializer来序列化和反序列化redis的key值
         template.setKeySerializer(new StringRedisSerializer());
         template.setHashKeySerializer(new StringRedisSerializer());
-        template.setHashValueSerializer(new StringRedisSerializer());
+        template.setHashValueSerializer(serializer);
         template.afterPropertiesSet();
         return template;
     }

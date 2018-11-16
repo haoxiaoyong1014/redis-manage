@@ -18,7 +18,7 @@ public class ResUtils {
 
     public static RespInfo getStringInfo(String key, RespInfo respInfo, List<BodyInfo> list,RedisTemplate redisTemplate) {
         BodyInfo bodyInfo;
-        String value = (String) redisTemplate.opsForValue().get(key);
+        String value = String.valueOf(redisTemplate.opsForValue().get(key));
         bodyInfo = new BodyInfo();
         bodyInfo.setKeyAndValue(value);
         list.add(bodyInfo);
@@ -44,7 +44,7 @@ public class ResUtils {
         List<Object> range = redisTemplate.opsForList().range(key, 0, -1);
         for (Object obj : range) {
             bodyInfo = new BodyInfo();
-            bodyInfo.setKeyAndValue(obj + "");
+            bodyInfo.setKeyAndValue(String.valueOf(obj));
             list.add(bodyInfo);
         }
         respInfo.setContent(list);

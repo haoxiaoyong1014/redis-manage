@@ -4,6 +4,8 @@ import haoxy.redis.manage.model.PageInfo;
 import haoxy.redis.manage.model.ServerInfo;
 import haoxy.redis.manage.resInfo.RespInfo;
 
+import java.io.IOException;
+
 /**
  * Created by haoxy on 2018/11/1.
  * E-mail:hxyHelloWorld@163.com

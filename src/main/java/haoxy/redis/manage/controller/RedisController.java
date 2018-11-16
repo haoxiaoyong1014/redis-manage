@@ -13,6 +13,7 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.ResponseBody;
 
+import java.io.IOException;
 import java.util.*;
 
 /**
@@ -32,9 +33,6 @@ public class RedisController {
     @Autowired
     private RedisService redisService;
 
-    @Autowired
-    private RedisTemplate redisTemplate;
-
     /**
      * 查询所有的key
      *
@@ -43,7 +41,7 @@ public class RedisController {
      */
     @RequestMapping(value = "/keys")
     @ResponseBody
-    public String redisKeys(@RequestBody PageInfo pageInfo) {
+    public String redisKeys(@RequestBody PageInfo pageInfo){
         RespInfo respInfo = redisService.selectKeys(pageInfo);
         return JSON.toJSONString(respInfo);
     }
@@ -67,9 +65,5 @@ public class RedisController {
         RespInfo respInfo = redisService.addServer(serverInfo);
         return JSON.toJSONString(respInfo);
     }
-    /**
-     * 向 redis中加入值
-     */
-
 
 }

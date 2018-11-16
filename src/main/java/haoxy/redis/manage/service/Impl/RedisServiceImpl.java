@@ -23,6 +23,7 @@ import org.springframework.data.redis.core.ScanOptions;
 import org.springframework.data.redis.serializer.StringRedisSerializer;
 import org.springframework.stereotype.Service;
 
+import java.io.IOException;
 import java.util.*;
 import java.util.concurrent.CopyOnWriteArrayList;
 
@@ -62,16 +63,20 @@ public class RedisServiceImpl implements RedisService, Constant {
             factory = redisTemplate.getConnectionFactory();
             connection = factory.getConnection();
         }
+        long aLong = 0;
         if ("".equals(pageInfo.getCond()) || REDISPROPERTIES_BUTTON_PROFIXKEY.equals(pageInfo.getRefresh())) {
             options = ScanOptions.scanOptions().match("*").build();
-
+            aLong = connection.dbSize();
         } else {
-            options = pageInfo.getNum() == REDISPROPERTIES_ONE_PROFIXKEY ?
+            options = pageInfo.getNum() .equals(REDISPROPERTIES_ONE_PROFIXKEY)  ?
                     ScanOptions.scanOptions().match(pageInfo.getCond() + "*").build() :
                     ScanOptions.scanOptions().match("*" + pageInfo.getCond() + "*").build();
-
+            Cursor<byte[]> cursor = connection.scan(options);
+            while (cursor.hasNext()) {
+                aLong++;
+                cursor.next();
+            }
         }
-        Long aLong = connection.dbSize();
         Cursor<byte[]> cursor = connection.scan(options);
         List<BodyInfo> result = new ArrayList<>(pageInfo.getPageSize());
         // Map<Object,Object>resMap=new HashMap<>(pageInfo.getPageSize());
