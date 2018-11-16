@@ -69,6 +69,7 @@ public class RedisServiceImpl implements RedisService, Constant {
             options = pageInfo.getNum() == REDISPROPERTIES_ONE_PROFIXKEY ?
                     ScanOptions.scanOptions().match(pageInfo.getCond() + "*").build() :
                     ScanOptions.scanOptions().match("*" + pageInfo.getCond() + "*").build();
+
         }
         Long aLong = connection.dbSize();
         Cursor<byte[]> cursor = connection.scan(options);
